@@ -1,324 +1,299 @@
-const monthlyData = [
-  { month: "Jan", recovered: 4200, atRisk: 1800 },
-  { month: "Feb", recovered: 4800, atRisk: 1600 },
-  { month: "Mar", recovered: 5100, atRisk: 1400 },
-  { month: "Apr", recovered: 4600, atRisk: 1900 },
-  { month: "May", recovered: 5400, atRisk: 1200 },
-  { month: "Jun", recovered: 6200, atRisk: 1100 },
-  { month: "Jul", recovered: 5800, atRisk: 1300 },
-  { month: "Aug", recovered: 6700, atRisk: 900 },
-  { month: "Sep", recovered: 7100, atRisk: 850 },
-  { month: "Oct", recovered: 6900, atRisk: 950 },
-  { month: "Nov", recovered: 7400, atRisk: 800 },
-  { month: "Dec", recovered: 7800, atRisk: 750 },
+"use client";
+
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Brain,
+  CircleDollarSign,
+  CreditCard,
+  ShoppingCart,
+  Users,
+} from "lucide-react";
+
+const recoveryData = [
+  { month: "Jan", value: 4200 },
+  { month: "Feb", value: 5100 },
+  { month: "Mar", value: 4700 },
+  { month: "Apr", value: 6800 },
+  { month: "May", value: 7600 },
+  { month: "Jun", value: 9200 },
+  { month: "Jul", value: 10500 },
+  { month: "Aug", value: 12100 },
 ];
 
 const recoverySources = [
-  { label: "Abandoned Carts", value: 42, color: "bg-indigo-500" },
-  { label: "Failed Payments", value: 28, color: "bg-blue-500" },
-  { label: "Subscription Churn", value: 18, color: "bg-emerald-500" },
-  { label: "Checkout Issues", value: 12, color: "bg-amber-500" },
+  { name: "Abandoned Carts", value: "$12,450", percentage: 42 },
+  { name: "Failed Payments", value: "$8,720", percentage: 29 },
+  { name: "Subscription Churn", value: "$5,830", percentage: 20 },
+  { name: "Other", value: "$2,670", percentage: 9 },
 ];
 
-const insights = [
+const recentActivities = [
   {
-    title: "Checkout drop-off increased this week",
-    description:
-      "Mobile checkout completion dropped 8% compared to last week. Review the payment form for friction points.",
-  },
-  {
-    title: "Several failed payments need attention",
-    description:
-      "14 payments worth $2,340 are stuck in a failed state and require manual retry or customer outreach.",
-  },
-  {
-    title: "High-value customers are at risk",
-    description:
-      "3 enterprise accounts with $12,400 in annual recurring revenue show signs of churn risk.",
-  },
-  {
-    title: "Recovery opportunity detected",
-    description:
-      "Abandoned cart recovery emails have a 24% open rate this month. Consider increasing send frequency.",
-  },
-];
-
-const activities = [
-  {
-    customer: "Alice Johnson",
-    issue: "Abandoned Cart",
-    amount: "$129.99",
+    customer: "Sarah Johnson",
+    action: "Payment recovered",
+    amount: "$249.00",
     status: "Recovered",
-    date: "2026-08-31",
   },
   {
-    customer: "Marcus Lee",
-    issue: "Failed Payment",
-    amount: "$349.00",
-    status: "Pending",
-    date: "2026-08-31",
-  },
-  {
-    customer: "Sarah Chen",
-    issue: "Subscription Churn",
-    amount: "$79.00",
-    status: "At Risk",
-    date: "2026-08-30",
-  },
-  {
-    customer: "David Patel",
-    issue: "Checkout Error",
-    amount: "$219.50",
+    customer: "Michael Smith",
+    action: "Cart recovery",
+    amount: "$189.50",
     status: "Recovered",
-    date: "2026-08-30",
   },
   {
-    customer: "Emily Watson",
-    issue: "Abandoned Cart",
-    amount: "$89.99",
+    customer: "Emma Williams",
+    action: "Payment retry",
+    amount: "$420.00",
     status: "Pending",
-    date: "2026-08-29",
+  },
+  {
+    customer: "James Brown",
+    action: "Subscription recovery",
+    amount: "$129.00",
+    status: "Recovered",
   },
 ];
 
-const maxValue = Math.max(...monthlyData.map((d) => d.recovered));
-const chartHeight = 240;
-const chartWidth = 900;
-const padding = { top: 20, right: 20, bottom: 30, left: 50 };
-const innerWidth = chartWidth - padding.left - padding.right;
-const innerHeight = chartHeight - padding.top - padding.bottom;
+const aiInsights = [
+  "Customers who receive a recovery message within 30 minutes are more likely to complete their purchase.",
+  "Your abandoned-cart recovery rate increased this month compared with the previous period.",
+  "Failed payment recovery is currently the biggest opportunity for additional revenue.",
+];
 
-const points = monthlyData.map((d, i) => ({
-  x: padding.left + (i / (monthlyData.length - 1)) * innerWidth,
-  y: padding.top + innerHeight - (d.recovered / maxValue) * innerHeight,
-}));
+export default function DashboardPage() {
+  const maxValue = Math.max(...recoveryData.map((item) => item.value));
 
-const pathD = points
-  .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
-  .join(" ");
-
-const areaD = `${pathD} L ${points[points.length - 1].x} ${padding.top + innerHeight} L ${points[0].x} ${padding.top + innerHeight} Z`;
-
-const yTicks = [0, 2000, 4000, 6000, 8000];
-
-export default function AdminDashboardPage() {
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
-            Revenue Overview
-          </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Monitor and recover lost revenue across all channels.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <select className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
-            <option>Last 12 months</option>
-            <option>Last 6 months</option>
-            <option>Last 30 days</option>
-          </select>
+    <main className="min-h-screen bg-slate-950 px-6 py-8 text-white md:px-8">
+      <div className="mx-auto max-w-7xl">
+        {/* Header */}
+        <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <div>
+            <p className="text-sm font-medium text-indigo-400">
+              AI Revenue Recovery
+            </p>
+
+            <h1 className="mt-1 text-3xl font-bold tracking-tight">
+              Revenue Overview
+            </h1>
+
+            <p className="mt-2 text-sm text-slate-400">
+              Monitor recovered revenue and identify new recovery opportunities.
+            </p>
+          </div>
+
           <button
             type="button"
-            className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800"
           >
-            Export
+            Last 30 Days
           </button>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <SummaryCard
-          title="Total Revenue Recovered"
-          value="$68,500"
-          change="+12.5%"
-          trend="up"
-          description="vs last period"
-        />
-        <SummaryCard
-          title="Revenue At Risk"
-          value="$9,100"
-          change="-8.2%"
-          trend="down"
-          description="improving"
-        />
-        <SummaryCard
-          title="Recovery Rate"
-          value="88.3%"
-          change="+4.1%"
-          trend="up"
-          description="vs last period"
-        />
-        <SummaryCard
-          title="Active Recovery Cases"
-          value="24"
-          change="-3"
-          trend="down"
-          description="pending resolution"
-        />
-      </div>
+        {/* Summary Cards */}
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <SummaryCard
+            title="Recovered Revenue"
+            value="$29,670"
+            change="+18.4%"
+            positive
+            icon={<CircleDollarSign size={22} />}
+          />
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
-          <div className="flex items-center justify-between mb-4">
+          <SummaryCard
+            title="Recovery Rate"
+            value="24.8%"
+            change="+4.2%"
+            positive
+            icon={<ArrowUpRight size={22} />}
+          />
+
+          <SummaryCard
+            title="Customers Recovered"
+            value="1,284"
+            change="+12.6%"
+            positive
+            icon={<Users size={22} />}
+          />
+
+          <SummaryCard
+            title="Pending Recovery"
+            value="$8,430"
+            change="-3.1%"
+            positive={false}
+            icon={<ShoppingCart size={22} />}
+          />
+        </div>
+
+        {/* Main Grid */}
+        <div className="mt-6 grid gap-6 xl:grid-cols-3">
+          {/* Revenue Chart */}
+          <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6 xl:col-span-2">
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold">Revenue Recovery Trend</h2>
+
+              <p className="mt-1 text-sm text-slate-400">
+                Recovered revenue over the last eight months.
+              </p>
+            </div>
+
+            <div className="flex h-72 items-end gap-3 border-b border-l border-slate-800 px-4 pb-0">
+              {recoveryData.map((item) => {
+                const height = `${(item.value / maxValue) * 100}%`;
+
+                return (
+                  <div
+                    key={item.month}
+                    className="flex h-full flex-1 flex-col justify-end"
+                  >
+                    <div className="group relative flex h-full items-end">
+                      <div
+                        className="w-full rounded-t-md bg-indigo-500 transition-all duration-300 group-hover:bg-indigo-400"
+                        style={{ height }}
+                      >
+                        <div className="absolute -top-8 left-1/2 hidden -translate-x-1/2 rounded bg-slate-800 px-2 py-1 text-xs text-white group-hover:block">
+                          ${item.value.toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+
+                    <span className="mt-3 text-center text-xs text-slate-500">
+                      {item.month}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Recovery Sources */}
+          <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h2 className="text-lg font-semibold">Recovery Sources</h2>
+
+            <p className="mt-1 text-sm text-slate-400">
+              Where recovered revenue is coming from.
+            </p>
+
+            <div className="mt-6 space-y-5">
+              {recoverySources.map((source) => (
+                <div key={source.name}>
+                  <div className="mb-2 flex items-center justify-between text-sm">
+                    <span className="text-slate-300">{source.name}</span>
+
+                    <span className="font-medium text-white">
+                      {source.value}
+                    </span>
+                  </div>
+
+                  <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+                    <div
+                      className="h-full rounded-full bg-indigo-500"
+                      style={{ width: `${source.percentage}%` }}
+                    />
+                  </div>
+
+                  <p className="mt-1 text-right text-xs text-slate-500">
+                    {source.percentage}%
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* AI Insights */}
+        <section className="mt-6 rounded-2xl border border-indigo-900/60 bg-slate-900 p-6">
+          <div className="flex items-start gap-4">
+            <div className="rounded-xl bg-indigo-500/10 p-3 text-indigo-400">
+              <Brain size={24} />
+            </div>
+
             <div>
-              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                Revenue Recovery Trend
-              </h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                Recovered revenue vs revenue at risk
+              <h2 className="text-lg font-semibold">AI Recovery Insights</h2>
+
+              <p className="mt-1 text-sm text-slate-400">
+                AI-generated observations based on your recovery activity.
               </p>
             </div>
           </div>
-          <div className="w-full overflow-x-auto">
-            <svg
-              viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-              className="w-full min-w-[600px]"
-              preserveAspectRatio="none"
-            >
-              {yTicks.map((tick) => {
-                const y = padding.top + innerHeight - (tick / maxValue) * innerHeight;
-                return (
-                  <g key={tick}>
-                    <line
-                      x1={padding.left}
-                      y1={y}
-                      x2={padding.left + innerWidth}
-                      y2={y}
-                      stroke="#e4e4e7"
-                      strokeDasharray="4 4"
-                    />
-                    <text
-                      x={padding.left - 8}
-                      y={y + 4}
-                      textAnchor="end"
-                      className="text-[10px] fill-zinc-500"
-                    >
-                      ${tick.toLocaleString()}
-                    </text>
-                  </g>
-                );
-              })}
 
-              <path d={areaD} fill="rgba(79, 70, 229, 0.1)" />
-              <path
-                d={pathD}
-                fill="none"
-                stroke="#4f46e5"
-                strokeWidth="2"
-                strokeLinejoin="round"
-                strokeLinecap="round"
-              />
-
-              {points.map((p, i) => (
-                <circle key={i} cx={p.x} cy={p.y} r="3" fill="#4f46e5" />
-              ))}
-            </svg>
-          </div>
-        </div>
-
-        <div className="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
-          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-            Recovery Sources
-          </h3>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
-            Where recovered revenue comes from
-          </p>
-          <div className="space-y-3">
-            {recoverySources.map((source) => (
-              <div key={source.label}>
-                <div className="flex items-center justify-between text-sm mb-1">
-                  <span className="text-zinc-700 dark:text-zinc-300">
-                    {source.label}
-                  </span>
-                  <span className="font-medium text-zinc-900 dark:text-zinc-100">
-                    {source.value}%
-                  </span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${source.color}`}
-                    style={{ width: `${source.value}%` }}
-                  />
-                </div>
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            {aiInsights.map((insight, index) => (
+              <div
+                key={index}
+                className="rounded-xl border border-slate-800 bg-slate-950 p-4"
+              >
+                <p className="text-sm leading-6 text-slate-300">{insight}</p>
               </div>
             ))}
           </div>
-        </div>
-      </div>
+        </section>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
-          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
-            Recent Recovery Activity
-          </h3>
+        {/* Recent Activity */}
+        <section className="mt-6 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold">
+                Recent Recovery Activity
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-400">
+                Latest revenue recovery actions.
+              </p>
+            </div>
+
+            <CreditCard className="text-slate-500" size={22} />
+          </div>
+
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full min-w-[650px] text-left">
               <thead>
-                <tr className="border-b border-zinc-200 dark:border-zinc-800">
-                  <th className="pb-2 font-medium text-zinc-500">Customer</th>
-                  <th className="pb-2 font-medium text-zinc-500">Issue</th>
-                  <th className="pb-2 font-medium text-zinc-500">Amount</th>
-                  <th className="pb-2 font-medium text-zinc-500">Status</th>
-                  <th className="pb-2 font-medium text-zinc-500">Date</th>
+                <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-slate-500">
+                  <th className="pb-3 font-medium">Customer</th>
+                  <th className="pb-3 font-medium">Action</th>
+                  <th className="pb-3 font-medium">Amount</th>
+                  <th className="pb-3 text-right font-medium">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                {activities.map((item) => (
-                  <tr key={item.customer + item.date}>
-                    <td className="py-3 font-medium text-zinc-900 dark:text-zinc-100">
-                      {item.customer}
+
+              <tbody>
+                {recentActivities.map((activity) => (
+                  <tr
+                    key={`${activity.customer}-${activity.action}`}
+                    className="border-b border-slate-800/70 last:border-0"
+                  >
+                    <td className="py-4 text-sm font-medium text-white">
+                      {activity.customer}
                     </td>
-                    <td className="py-3 text-zinc-700 dark:text-zinc-300">
-                      {item.issue}
+
+                    <td className="py-4 text-sm text-slate-400">
+                      {activity.action}
                     </td>
-                    <td className="py-3 text-zinc-700 dark:text-zinc-300">
-                      {item.amount}
+
+                    <td className="py-4 text-sm text-slate-300">
+                      {activity.amount}
                     </td>
-                    <td className="py-3">
+
+                    <td className="py-4 text-right">
                       <span
-                        className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                          item.status === "Recovered"
-                            ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
-                            : item.status === "Pending"
-                              ? "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
-                              : "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
+                          activity.status === "Recovered"
+                            ? "bg-emerald-500/10 text-emerald-400"
+                            : "bg-amber-500/10 text-amber-400"
                         }`}
                       >
-                        {item.status}
+                        {activity.status}
                       </span>
                     </td>
-                    <td className="py-3 text-zinc-500">{item.date}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
-
-        <div className="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
-          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
-            AI Recovery Insights
-          </h3>
-          <div className="space-y-4">
-            {insights.map((item) => (
-              <div
-                key={item.title}
-                className="rounded-md border border-zinc-200 p-3 dark:border-zinc-800"
-              >
-                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                  {item.title}
-                </p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                  {item.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
 
@@ -326,34 +301,41 @@ function SummaryCard({
   title,
   value,
   change,
-  trend,
-  description,
+  positive,
+  icon,
 }: {
   title: string;
   value: string;
   change: string;
-  trend: "up" | "down";
-  description: string;
+  positive: boolean;
+  icon: React.ReactNode;
 }) {
-  const isPositive = trend === "up";
-
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-      <p className="text-xs font-medium text-zinc-500">{title}</p>
-      <p className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mt-1">
-        {value}
-      </p>
-      <div className="flex items-center gap-2 mt-2">
+    <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+      <div className="flex items-center justify-between">
+        <div className="rounded-xl bg-indigo-500/10 p-3 text-indigo-400">
+          {icon}
+        </div>
+
+        {positive ? (
+          <ArrowUpRight size={18} className="text-emerald-400" />
+        ) : (
+          <ArrowDownRight size={18} className="text-amber-400" />
+        )}
+      </div>
+
+      <p className="mt-5 text-sm text-slate-400">{title}</p>
+
+      <div className="mt-1 flex items-end justify-between gap-3">
+        <p className="text-2xl font-bold text-white">{value}</p>
+
         <span
-          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-            isPositive
-              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
-              : "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+          className={`text-xs font-medium ${
+            positive ? "text-emerald-400" : "text-amber-400"
           }`}
         >
           {change}
         </span>
-        <span className="text-xs text-zinc-500">{description}</span>
       </div>
     </div>
   );

@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
-const navItems = [
-  { href: "/admin/dashboard", label: "Overview" },
-  { href: "/admin/revenue", label: "Revenue Insights" },
-  { href: "/admin/recovery", label: "Recovery" },
-  { href: "/admin/customers", label: "Customers" },
-  { href: "/admin/transactions", label: "Transactions" },
-  { href: "/admin/reports", label: "Reports" },
-  { href: "/admin/settings", label: "Settings" },
+const navigation = [
+  { name: "Overview", href: "/admin/dashboard" },
+  { name: "Revenue Insights", href: "/admin/revenue" },
+  { name: "Recovery", href: "/admin/recovery" },
+  { name: "Customers", href: "/admin/customers" },
+  { name: "Transactions", href: "/admin/transactions" },
+  { name: "Reports", href: "/admin/reports" },
+  { name: "Settings", href: "/admin/settings" },
 ];
 
 export default function DashboardLayout({
@@ -19,54 +20,62 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleLogout() {
+    const supabase = createClient();
+
+    await supabase.auth.signOut();
+
+    router.push("/login");
+    router.refresh();
+  }
 
   return (
-    <div className="flex min-h-screen bg-zinc-50 dark:bg-black">
-      <aside className="fixed inset-y-0 left-0 z-40 w-64 bg-zinc-900 text-white flex flex-col">
-        <div className="p-5 border-b border-zinc-800">
-          <h2 className="text-base font-semibold tracking-tight">
-            AI Revenue Recovery
-          </h2>
-          <p className="text-xs text-zinc-400 mt-0.5">SaaS Platform</p>
+    <div className="flex min-h-screen bg-zinc-50">
+      <aside className="fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-zinc-950 text-white">
+        <div className="border-b border-zinc-800 px-6 py-5">
+          <h1 className="text-lg font-semibold">AI Revenue Recovery</h1>
+          <p className="mt-1 text-xs text-zinc-400">Admin Dashboard</p>
         </div>
-        <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-          {navItems.map((item) => {
+
+        <nav className="flex-1 space-y-1 px-3 py-5">
+          {navigation.map((item) => {
             const isActive = pathname === item.href;
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block rounded-md px-3 py-2 text-sm transition-colors ${
+                className={`block rounded-lg px-3 py-2.5 text-sm transition ${
                   isActive
-                    ? "bg-white/10 text-white"
-                    : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                    ? "bg-indigo-600 text-white"
+                    : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
                 }`}
               >
-                {item.label}
+                {item.name}
               </Link>
             );
           })}
         </nav>
-        <div className="p-4 border-t border-zinc-800">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-indigo-500 flex items-center justify-center text-sm font-medium">
-              JD
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">John Doe</p>
-              <p className="text-xs text-zinc-400 truncate">Admin</p>
-            </div>
-            <button
-              type="button"
-              className="text-xs text-zinc-400 hover:text-white"
-            >
-              Logout
-            </button>
+
+        <div className="border-t border-zinc-800 p-4">
+          <div className="mb-3">
+            <p className="text-sm font-medium text-white">Admin User</p>
+            <p className="text-xs text-zinc-500">Revenue Manager</p>
           </div>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="text-xs text-zinc-400 hover:text-white"
+          >
+            Logout
+          </button>
         </div>
       </aside>
 
-      <main className="flex-1 ml-64">{children}</main>
+      <main className="ml-64 min-h-screen flex-1">{children}</main>
     </div>
   );
 }
