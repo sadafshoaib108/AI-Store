@@ -12,6 +12,7 @@ const navigation = [
   { name: "Transactions", href: "/admin/transactions" },
   { name: "Reports", href: "/admin/reports" },
   { name: "Settings", href: "/admin/settings" },
+  { name: "Store", href: "/store" },
 ];
 
 export default function DashboardLayout({
