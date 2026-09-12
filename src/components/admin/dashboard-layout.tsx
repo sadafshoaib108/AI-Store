@@ -5,14 +5,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 const navigation = [
-  { name: "Overview", href: "/admin/dashboard" },
-  { name: "Revenue Insights", href: "/admin/revenue" },
-  { name: "Recovery", href: "/admin/recovery" },
+  { name: "Dashboard", href: "/admin/dashboard" },
+  { name: "Revenue", href: "/admin/revenue" },
+  { name: "Orders", href: "/admin/orders" },
+  { name: "Products", href: "/admin/products" },
+  { name: "Store", href: "/store" },
   { name: "Customers", href: "/admin/customers" },
-  { name: "Transactions", href: "/admin/transactions" },
+  { name: "Revenue Problems", href: "/admin/revenue-problems" },
+  { name: "AI Insights", href: "/admin/ai-insights" },
   { name: "Reports", href: "/admin/reports" },
   { name: "Settings", href: "/admin/settings" },
-  { name: "Store", href: "/store" },
 ];
 
 export default function DashboardLayout({
